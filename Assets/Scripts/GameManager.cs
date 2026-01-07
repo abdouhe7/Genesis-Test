@@ -5,38 +5,25 @@ using CombatDemo.Network;
 namespace CombatDemo
 {
     /// <summary>
-    /// Main game manager for the combat demo.
-    /// Handles initialization, scene setup, and game state.
+    /// Simplified game manager for the combat demo.
+    /// Finds and manages existing player and dummy in the scene.
     /// </summary>
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance { get; private set; }
-        
-        [Header("Scene References")]
-        [SerializeField] private GameObject playerPrefab;
-        [SerializeField] private GameObject dummyPrefab;
-        [SerializeField] private Transform playerSpawnPoint;
-        [SerializeField] private Transform dummySpawnPoint;
-        
-        [Header("Camera Settings")]
-        [SerializeField] private Camera mainCamera;
-        [SerializeField] private Vector3 cameraOffset = new Vector3(0f, 5f, -8f);
-        [SerializeField] private float cameraFollowSpeed = 5f;
-        
+
+        [Header("Scene References (Optional - will auto-find if not assigned)")]
+        [SerializeField] private GameObject player;
+        [SerializeField] private GameObject dummy;
+
         [Header("Network")]
         [SerializeField] private bool connectOnStart = true;
-        
-        [Header("Debug")]
-        [SerializeField] private bool spawnOnStart = true;
-        [SerializeField] private bool showDebugUI = true;
-        
-        private GameObject _player;
-        private GameObject _dummy;
+
         private WebSocketClient _webSocketClient;
         private CombatStatsTracker _statsTracker;
-        
-        public GameObject Player => _player;
-        public GameObject Dummy => _dummy;
+
+        public GameObject Player => player;
+        public GameObject Dummy => dummy;
         
         private void Awake()
         {
@@ -45,29 +32,19 @@ namespace CombatDemo
                 Destroy(gameObject);
                 return;
             }
-            
+
             Instance = this;
-            
+
             InitializeComponents();
+            FindSceneObjects();
         }
-        
+
         private void Start()
         {
-            if (spawnOnStart)
-            {
-                SpawnPlayer();
-                SpawnDummy();
-            }
-            
             if (connectOnStart && _webSocketClient != null)
             {
                 _webSocketClient.Connect();
             }
-        }
-        
-        private void LateUpdate()
-        {
-            UpdateCamera();
         }
         
         private void OnDestroy()
@@ -89,7 +66,7 @@ namespace CombatDemo
                 networkObj.transform.SetParent(transform);
                 _webSocketClient = networkObj.AddComponent<WebSocketClient>();
             }
-            
+
             // Find or create StatsTracker
             _statsTracker = FindObjectOfType<CombatStatsTracker>();
             if (_statsTracker == null)
@@ -98,56 +75,67 @@ namespace CombatDemo
                 statsObj.transform.SetParent(transform);
                 _statsTracker = statsObj.AddComponent<CombatStatsTracker>();
             }
-            
-            // Setup camera
-            if (mainCamera == null)
-            {
-                mainCamera = Camera.main;
-            }
         }
-        
-        private void SpawnPlayer()
+
+        private void FindSceneObjects()
         {
-            if (playerPrefab == null)
+            // Find player if not manually assigned
+            if (player == null)
             {
-                Debug.LogWarning("[GameManager] Player prefab not assigned!");
-                return;
+                player = GameObject.FindGameObjectWithTag("Player");
+                if (player == null)
+                {
+                    // Fallback: find by component
+                    var playerCombat = FindObjectOfType<CombatSystem.ThirdPersonCombatBridge>();
+                    if (playerCombat != null)
+                    {
+                        player = playerCombat.gameObject;
+                        Debug.Log("[GameManager] Found player by component: " + player.name);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[GameManager] Player not found in scene! Make sure player has 'Player' tag or ThirdPersonCombatBridge component.");
+                    }
+                }
+                else
+                {
+                    Debug.Log("[GameManager] Found player by tag: " + player.name);
+                }
             }
-            
-            Vector3 spawnPos = playerSpawnPoint != null ? playerSpawnPoint.position : Vector3.zero;
-            Quaternion spawnRot = playerSpawnPoint != null ? playerSpawnPoint.rotation : Quaternion.identity;
-            
-            _player = Instantiate(playerPrefab, spawnPos, spawnRot);
-            _player.name = "Player";
-        }
-        
-        private void SpawnDummy()
-        {
-            if (dummyPrefab == null)
+
+            // Find dummy if not manually assigned
+            if (dummy == null)
             {
-                Debug.LogWarning("[GameManager] Dummy prefab not assigned!");
-                return;
+                dummy = GameObject.FindGameObjectWithTag("Dummy");
+                if (dummy == null)
+                {
+                    // Fallback: find by component
+                    var dummyController = FindObjectOfType<Dummy.DummyController>();
+                    if (dummyController == null)
+                    {
+                        var dummyHit = FindObjectOfType<CombatSystem.DummyHitReaction>();
+                        if (dummyHit != null)
+                        {
+                            dummy = dummyHit.gameObject;
+                            Debug.Log("[GameManager] Found dummy by component: " + dummy.name);
+                        }
+                    }
+                    else
+                    {
+                        dummy = dummyController.gameObject;
+                        Debug.Log("[GameManager] Found dummy by component: " + dummy.name);
+                    }
+
+                    if (dummy == null)
+                    {
+                        Debug.LogWarning("[GameManager] Dummy not found in scene! Make sure dummy has 'Dummy' tag or DummyController/DummyHitReaction component.");
+                    }
+                }
+                else
+                {
+                    Debug.Log("[GameManager] Found dummy by tag: " + dummy.name);
+                }
             }
-            
-            Vector3 spawnPos = dummySpawnPoint != null ? dummySpawnPoint.position : new Vector3(0f, 0f, 3f);
-            Quaternion spawnRot = dummySpawnPoint != null ? dummySpawnPoint.rotation : Quaternion.identity;
-            
-            _dummy = Instantiate(dummyPrefab, spawnPos, spawnRot);
-            _dummy.name = "TrainingDummy";
-        }
-        
-        private void UpdateCamera()
-        {
-            if (mainCamera == null || _player == null) return;
-            
-            Vector3 targetPosition = _player.transform.position + cameraOffset;
-            mainCamera.transform.position = Vector3.Lerp(
-                mainCamera.transform.position, 
-                targetPosition, 
-                cameraFollowSpeed * Time.deltaTime
-            );
-            
-            mainCamera.transform.LookAt(_player.transform.position + Vector3.up);
         }
         
         /// <summary>
@@ -160,19 +148,20 @@ namespace CombatDemo
             {
                 _statsTracker.ResetStats();
             }
-            
-            // Reset player position
-            if (_player != null && playerSpawnPoint != null)
-            {
-                _player.transform.position = playerSpawnPoint.position;
-                _player.transform.rotation = playerSpawnPoint.rotation;
-            }
-            
+
             // Reset dummy
-            Dummy.DummyController dummyController = _dummy?.GetComponent<Dummy.DummyController>();
+            var dummyController = dummy?.GetComponent<Dummy.DummyController>();
             if (dummyController != null)
             {
                 dummyController.ResetDummy();
+            }
+            else
+            {
+                var dummyHit = dummy?.GetComponent<CombatSystem.DummyHitReaction>();
+                if (dummyHit != null)
+                {
+                    dummyHit.ResetDummy();
+                }
             }
         }
         
@@ -184,24 +173,5 @@ namespace CombatDemo
             Time.timeScale = paused ? 0f : 1f;
         }
         
-        #if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            // Draw spawn points
-            if (playerSpawnPoint != null)
-            {
-                Gizmos.color = Color.blue;
-                Gizmos.DrawWireSphere(playerSpawnPoint.position, 0.5f);
-                Gizmos.DrawLine(playerSpawnPoint.position, playerSpawnPoint.position + playerSpawnPoint.forward);
-            }
-            
-            if (dummySpawnPoint != null)
-            {
-                Gizmos.color = Color.red;
-                Gizmos.DrawWireSphere(dummySpawnPoint.position, 0.5f);
-                Gizmos.DrawLine(dummySpawnPoint.position, dummySpawnPoint.position + dummySpawnPoint.forward);
-            }
-        }
-        #endif
     }
 }

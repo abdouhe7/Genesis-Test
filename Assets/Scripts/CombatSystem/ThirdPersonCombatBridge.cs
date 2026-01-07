@@ -170,9 +170,9 @@ namespace CombatSystem
         private void SetupLayers()
         {
             _locomotionLayer = _animancer.Layers[0];
-            
+
             _fightingStanceLayer = _animancer.Layers[1];
-            
+
             if (upperBodyMask != null)
             {
                 _fightingStanceLayer.Mask = upperBodyMask;
@@ -182,8 +182,20 @@ namespace CombatSystem
                 Debug.LogWarning("[CombatBridge] Upper Body Mask is missing! Fighting stance blending will affect the whole body.");
             }
             _fightingStanceLayer.Weight = 0f;
-            
+
             _combatLayer = _animancer.Layers[2];
+
+            // // Apply upper body mask to combat layer so legs keep animating while punching
+            // if (upperBodyMask != null)
+            // {
+            //     _combatLayer.Mask = upperBodyMask;
+            //     Debug.Log("[CombatBridge] Upper body mask applied to combat layer - legs will animate while punching!");
+            // }
+            // else
+            // {
+            //     Debug.LogWarning("[CombatBridge] Upper Body Mask is missing! Combat animations will affect the whole body (legs won't move while punching).");
+            // }
+
             _combatLayer.Weight = 0f;
         }
         

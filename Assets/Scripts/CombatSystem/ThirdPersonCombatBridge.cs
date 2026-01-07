@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using Animancer;
+using CombatDemo.Combat; // For CombatEvents
 
 namespace CombatSystem
 {
@@ -367,6 +368,9 @@ namespace CombatSystem
             // Fade in the combat layer
             _combatLayer.StartFade(1f, layerFadeInDuration);
 
+            // Raise combat event for stats tracking
+            CombatEvents.RaiseAttackPerformed(AttackType.Punch);
+
             PlayAttack(punchJab);
         }
         
@@ -436,6 +440,9 @@ namespace CombatSystem
             // Fade in combat layer
             _combatLayer.StartFade(1f, layerFadeInDuration);
 
+            // Raise combat event for stats tracking
+            CombatEvents.RaiseAttackPerformed(AttackType.Kick);
+
             if (kick.IsValid())
             {
                 // Play with 0 fade - let layer weight handle the blend
@@ -463,6 +470,9 @@ namespace CombatSystem
 
             // Fade in combat layer
             _combatLayer.StartFade(1f, layerFadeInDuration);
+
+            // Raise combat event for stats tracking
+            CombatEvents.RaiseDashPerformed();
 
             PlayDirectionalDodge(dir);
         }
@@ -588,19 +598,22 @@ namespace CombatSystem
         {
             Vector3 origin = transform.position + Vector3.up * 1f;
             Vector3 center = origin + transform.forward * 0.5f;
-            
+
             if (debugHitDetection)
             {
                 Debug.Log($"[CombatBridge] Checking Hit... Origin: {center}, Range: {attackRange}");
             }
-            
+
             Collider[] hits = Physics.OverlapSphere(center, attackRange, hitLayers);
-            
+
             if (debugHitDetection && hits.Length > 0)
             {
                 Debug.Log($"[CombatBridge] OverlapSphere found {hits.Length} colliders.");
             }
-            
+
+            bool hitLanded = false;
+            AttackType attackType = isPunch ? AttackType.Punch : AttackType.Kick;
+
             foreach (var hit in hits)
             {
                 if (hit.transform == transform) continue;
@@ -617,14 +630,17 @@ namespace CombatSystem
                 }
                 
                 if (angle > attackAngle) continue;
-                
+
                 var damageable = hit.GetComponent<IDamageable>();
                 if (damageable != null)
                 {
                     Debug.Log($"[CombatBridge] HIT CONFIRMED on {hit.name}!");
-                    
-                    var attackType = isPunch ? AttackType.Punch : AttackType.Kick;
+
                     damageable.TakeDamage(isPunch ? 10f : 15f, attackType, toTarget.normalized);
+
+                    // Raise hit landed event
+                    hitLanded = true;
+                    CombatEvents.RaiseHitLanded(attackType, hit.transform.position);
                 }
                 else
                 {
@@ -633,10 +649,19 @@ namespace CombatSystem
                     if (damageable != null)
                     {
                         Debug.Log($"[CombatBridge] HIT CONFIRMED on Parent {hit.transform.parent.name}!");
-                        var attackType = isPunch ? AttackType.Punch : AttackType.Kick;
                         damageable.TakeDamage(isPunch ? 10f : 15f, attackType, toTarget.normalized);
+
+                        // Raise hit landed event
+                        hitLanded = true;
+                        CombatEvents.RaiseHitLanded(attackType, hit.transform.parent.position);
                     }
                 }
+            }
+
+            // If no hit landed, raise hit missed event
+            if (!hitLanded)
+            {
+                CombatEvents.RaiseHitMissed(attackType);
             }
         }
         

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using CombatSystem;
 
 namespace CombatDemo.Combat
 {
@@ -65,11 +66,8 @@ namespace CombatDemo.Combat
         }
     }
 
-    public enum AttackType
-    {
-        Punch,
-        Kick
-    }
+    // Note: AttackType enum is defined in CombatSystem.CombatTypes.cs
+    // We use that enum here to avoid duplication
 
     [Serializable]
     public class CombatStatsData

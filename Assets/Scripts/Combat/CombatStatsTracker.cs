@@ -1,6 +1,7 @@
 using UnityEngine;
 using CombatDemo.Combat;
 using CombatDemo.Network;
+using CombatSystem; // For AttackType enum
 
 namespace CombatDemo.Combat
 {

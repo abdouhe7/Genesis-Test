@@ -1,5 +1,6 @@
 using UnityEngine;
 using CombatDemo.Combat;
+using CombatSystem;
 
 namespace CombatDemo.Player
 {

@@ -98,6 +98,15 @@ Thumbs.db
 **/fmod.log
 **/fmod_editor.log
 
+# Node.js / Dashboard Server
+Server/node_modules/
+Server/client/node_modules/
+Server/client/build/
+Server/.env
+Server/package-lock.json
+Server/client/package-lock.json
+*.log
+
 # Assets that should be tracked (if using LFS)
 # !/[Aa]ssets/**/*.fbx
 # !/[Aa]ssets/**/*.png

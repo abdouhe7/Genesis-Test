@@ -1,0 +1,123 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         COMBAT STATS DASHBOARD - QUICK START GUIDE           ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+📋 REQUIREMENTS
+───────────────
+✅ Node.js (Download: https://nodejs.org)
+✅ Unity Project (You already have this!)
+
+That's it! No database, no complex setup.
+
+
+🚀 FASTEST START (3 STEPS)
+──────────────────────────
+
+Step 1: Install Node.js
+   → Download from https://nodejs.org
+   → Choose LFS version
+   → Install and restart terminal
+
+Step 2: Run the server
+   OPTION A (Easy): Double-click "START_SERVER.bat"
+
+   OPTION B (Manual):
+   → Open terminal
+   → cd "P:\Unity Projects\Genesis test\Assets\Server"
+   → npm install
+   → npm start
+
+Step 3: Play Unity!
+   → Unity will auto-connect to server
+   → Stats will appear in terminal
+
+DONE! ✅
+
+
+📊 VIEW DASHBOARD (OPTIONAL)
+────────────────────────────
+Want to see stats in browser?
+
+cd "P:\Unity Projects\Genesis test\Assets\Server\client"
+npm install
+npm start
+
+→ Dashboard opens at http://localhost:3000
+
+
+✅ VERIFY IT'S WORKING
+──────────────────────
+1. Server running? You should see fancy box in terminal
+2. Open browser: http://localhost:5000/api/health
+3. Should show: {"status":"ok",...}
+4. Play Unity and watch terminal for connection logs!
+
+
+🎮 DAILY WORKFLOW
+─────────────────
+1. Double-click START_SERVER.bat (or run "npm start")
+2. Open Unity and press Play
+3. Fight and see stats!
+
+
+🔧 TROUBLESHOOTING
+──────────────────
+Problem: "npm not found"
+→ Install Node.js from https://nodejs.org
+
+Problem: "Port 5000 in use"
+→ Close other programs or change port in .env
+
+Problem: Unity not connecting
+→ Check server is running
+→ Check Unity's Server URL = http://localhost:5000
+
+
+📡 HOW IT WORKS
+───────────────
+Unity → Sends stats → Server → Stores & Broadcasts → Dashboard
+
+Stats update every 0.5 seconds automatically!
+
+
+💡 TIPS
+───────
+• Keep server running while developing
+• Server reconnects automatically if Unity restarts
+• Check stats anytime: http://localhost:5000/api/stats
+• Multiple dashboards can connect at once
+• MongoDB is optional (server works without it)
+
+
+📝 QUICK COMMANDS
+─────────────────
+Start server:
+  npm start
+
+View health:
+  http://localhost:5000/api/health
+
+View stats:
+  http://localhost:5000/api/stats
+
+Reset stats:
+  curl -X POST http://localhost:5000/api/stats/reset
+
+
+🎯 WHAT'S TRACKED?
+──────────────────
+• Total attacks (punch/kick)
+• Hits landed vs missed
+• Hit accuracy %
+• Dash count
+• Session duration
+• Custom events
+
+
+═══════════════════════════════════════════════════════════════
+
+Need help? Check SETUP_DASHBOARD.md for detailed guide!
+
+═══════════════════════════════════════════════════════════════

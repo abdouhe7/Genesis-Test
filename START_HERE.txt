@@ -1,0 +1,110 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║           GENESIS TEST - QUICK START GUIDE                    ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+📋 WHAT IS THIS PROJECT?
+────────────────────────
+A Unity combat system with:
+  ✅ Third-person player controller
+  ✅ Punch/kick/dodge mechanics
+  ✅ Training dummy with hit reactions
+  ✅ Real-time stats dashboard (optional)
+
+
+🎮 PLAY THE GAME (UNITY)
+────────────────────────
+1. Open Unity 2021.3 or later
+2. Open this project folder
+3. Let Unity import everything (may take a while first time)
+4. Open any scene in Assets/Scenes/
+5. Press Play!
+
+Controls:
+  • WASD - Move
+  • Left Click - Punch
+  • Right Click - Kick
+  • Space - Dodge
+
+
+📊 VIEW STATS DASHBOARD (OPTIONAL)
+──────────────────────────────────
+Want to see combat stats in real-time?
+
+Windows (Super Easy):
+  1. Install Node.js from https://nodejs.org
+  2. Double-click: Server/START_DASHBOARD.bat
+  3. Done! Dashboard opens automatically!
+
+Mac/Linux:
+  1. Install Node.js from https://nodejs.org
+  2. Open terminal in Server folder
+  3. Run: npm install && npm run dev:all
+
+
+✅ HOW TO VERIFY EVERYTHING WORKS
+─────────────────────────────────
+Dashboard:
+  → Open browser: http://localhost:5000/api/health
+  → Should see: {"status":"ok",...}
+
+Unity:
+  → Press Play
+  → Perform attacks
+  → Stats appear in dashboard automatically!
+
+
+🔧 TROUBLESHOOTING
+──────────────────
+Dashboard not working?
+  → See: Server/README.md (detailed troubleshooting)
+
+Unity errors?
+  → Make sure all packages are imported
+  → Check console for specific errors
+
+Node.js not found?
+  → Download from https://nodejs.org
+  → Restart computer after installation
+
+
+📂 PROJECT STRUCTURE
+────────────────────
+Assets/
+  ├── Scripts/CombatSystem/  ← Combat mechanics
+  ├── Scripts/Dummy/         ← Training dummy
+  ├── Scripts/Network/       ← Stats tracking
+  └── Scenes/                ← Game scenes
+
+Server/
+  ├── START_DASHBOARD.bat    ← Double-click to start!
+  ├── server.js              ← Backend server
+  ├── client/                ← Dashboard UI
+  └── README.md              ← Detailed server docs
+
+
+📚 DOCUMENTATION
+────────────────
+• README.md                  ← Main project info
+• Server/README.md           ← Dashboard setup & troubleshooting
+• SETUP_DASHBOARD.md         ← Complete dashboard guide
+
+
+💡 QUICK TIPS
+─────────────
+• Leave dashboard running while developing
+• Stats update every 0.5 seconds
+• No database needed - works out of the box!
+• Multiple developers can share one dashboard server
+
+
+═══════════════════════════════════════════════════════════════
+
+                    READY TO START!
+
+    1. Open Unity → Press Play
+    2. (Optional) Double-click Server/START_DASHBOARD.bat
+    3. Fight and see stats!
+
+═══════════════════════════════════════════════════════════════

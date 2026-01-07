@@ -2,14 +2,6 @@
 
 A Unity project featuring a third-person combat system with Animancer integration.
 
-## Features
-
-- **Third-Person Combat System**: Punch combos, kicks, and dodge mechanics
-- **Animancer Integration**: Smooth animation blending and transitions
-- **Hit Detection**: Physics-based combat hit detection
-- **Training Dummy**: Interactive dummy with hit reactions
-- **Real-Time Stats Dashboard**: Web-based dashboard to track combat stats
-
 ## Requirements
 
 **For Unity:**
@@ -17,8 +9,8 @@ A Unity project featuring a third-person combat system with Animancer integratio
 - Input System package
 - Cinemachine package
 
-**For Dashboard (Optional):**
-- Node.js (download from https://nodejs.org)
+**For Dashboard:**
+- Make sure that you install Node.js (download from https://nodejs.org)
 
 ## Quick Setup
 
@@ -45,12 +37,6 @@ That's it! The script handles:
 
 **Having issues?** See `Server/README.md` for detailed troubleshooting.
 
-## Combat Controls
-
-- **Punch**: Left Mouse Button / Gamepad Button
-- **Kick**: Right Mouse Button / Gamepad Button
-- **Dodge**: Space / Gamepad Button
-- **Movement**: WASD / Left Stick
 
 ## Development
 

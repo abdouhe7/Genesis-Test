@@ -13,11 +13,10 @@ A Unity project featuring a third-person combat system with Animancer integratio
 - Make sure that you install Node.js (download from https://nodejs.org)
 
 
-### 🎮 Ready Build For Genesis To Test
+## Ready Build For Genesis To Test
+1. [Dashboard] If you have the required environment For the dashboard  Run the file [Server/START_DASHBOARD.bat]
 
-1.[Dashboard] If you have the required environment For the dashboard  Run the file [Server/START_DASHBOARD.bat]
-
-2.[The Game] The build Located at Folder [Build For Genesis] On root To Test With 
+2. [The Game] The build Located at Folder [Build For Genesis] On root To Test With 
 
 ## Quick Setup
 
